@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Detalles de ubicación</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+
+  <div class="container mt-4">
+    <h1 class="display-4">Detalles de ubicación</h1>
+    <div id="episodeDetails" class="card">
+      <div class="card-body">
+        <h5 class="card-title" id="episodeTitle"></h5>
+        <p class="card-text" id="episodeDetailsText"></p>
+        <p class="card-text" id="characterList"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script>
+    // Función para obtener el valor de un parámetro de la URL
+    function obtenerParametroDeURL(url) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(url);
+    }
+
+    // Obtener la URL del episodio desde los parámetros de la URL
+    const episodeUrl = obtenerParametroDeURL('url');
+
+    // Función para cargar detalles del episodio desde la API
+    function cargarDetallesEpisodio(url) {
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          // Actualizar los elementos HTML con los detalles del episodio
+          document.getElementById('episodeTitle').textContent = data.name;
+          document.getElementById('episodeDetailsText').innerHTML = `Tipo: ${data.type}
+          <br>Dimensión: ${data.dimension}`;
+          // Mostrar la lista de personajes
+          const charactersList = data.residents.map(ch => `<a href="personaje.html?url=${ch}" target="_blank">${ch}</a>`).join(', ');
+          document.getElementById('characterList').innerHTML = `Episodios: ${charactersList}`;
+
+        })
+        .catch(error => console.error('Error fetching episode details:', error));
+    }
+
+    // Cargar detalles del episodio al cargar la página
+    window.onload = function() {
+      cargarDetallesEpisodio(episodeUrl);
+    };
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Detalles del Personaje de Rick and Morty</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+
+  <div class="container mt-4">
+    <h1 class="display-4">Detalles del Personaje de Rick and Morty</h1>
+    <div id="characterDetails" class="card">
+      <div class="card-body">
+        <!-- Agregar enlace para cargar información del episodio -->
+        <p class="card-text"><a href="#" id="episodeLink">Cargar Detalles del Episodio</a></p>
+
+        <h5 class="card-title" id="characterName"></h5>
+        <p class="card-text" id="characterDetailsText"></p>
+        <img src="" alt="Imagen del Personaje" id="characterImage" class="img-fluid mt-3" style="max-width: 300px;">
+        <p class="card-text" id="characterEpisodes"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script>
+    // Obtener el parámetro de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const characterUrl = urlParams.get('url');
+
+    // Función para cargar detalles del personaje desde la API
+    function cargarDetallesPersonaje(url) {
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          // Actualizar los elementos HTML con los detalles del personaje
+          document.getElementById('characterName').textContent = data.name;
+          document.getElementById('characterDetailsText').innerHTML = `Especie: ${data.species}
+          <br>Estado: ${data.status}
+          <br>Tipo: ${data.type}
+          <br>Genero: ${data.gender}
+          <br>Origen: <a href="ubicacion.html?url=${data.origin.url}" target="_blank">${data.origin.name}</a>
+          <br>Ubicacion: <a href="ubicacion.html?url=${data.location.url}" target="_blank">${data.location.name}</a>
+          <br>Creacion: ${data.created}`;
+          
+          document.getElementById('characterImage').src = data.image;
+
+          // Mostrar la lista de episodios
+          const episodesList = data.episode.map(ep => `<a href="episode.html?url=${ep}" target="_blank">${ep}</a>`).join(', ');
+          document.getElementById('characterEpisodes').innerHTML = `Episodios: ${episodesList}`;
+
+        })
+        .catch(error => console.error('Error fetching character details:', error));
+    }
+
+    // Cargar detalles del personaje al cargar la página
+    window.onload = function() {
+      cargarDetallesPersonaje(characterUrl);
+    };
+  </script>
+
+</body>
+</html>
